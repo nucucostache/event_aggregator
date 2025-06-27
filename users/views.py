@@ -37,13 +37,14 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 
-                # 👇 Redirecționare în funcție de rol
                 try:
                     role = user.userprofile.role
                     if role == 'organizer':
+                        messages.success(request, "Autentificare reușită! Ești organizator.")
                         return redirect('events:dashboard_organizator')
                     else:
-                        return redirect('events:event_list')  # sau orice view ai pentru useri standard
+                        messages.success(request, "Autentificare reușită! Ești utilizator standard.")
+                        return redirect('events:dashboard_user')
                 except UserProfile.DoesNotExist:
                     messages.error(request, "Contul nu are un profil asociat.")
                     return redirect('users:login')
@@ -53,6 +54,7 @@ def login_view(request):
         form = LoginForm()
     
     return render(request, 'users/login.html', {'form': form})
+
 
 
 def logout_view(request):

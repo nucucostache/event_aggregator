@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-3">{{ title }}</h2>
+
+  {% if events %}
+    <ul class="list-group">
+      {% for event in events %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <strong>{{ event.title }}</strong>
+          <span class="badge bg-secondary">{{ event.start_date|date:"d.m.Y" }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-info">Nu ești înscris la niciun eveniment.</div>
+  {% endif %}
+</div>
+{% endblock %}

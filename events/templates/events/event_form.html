@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+{% load form_tags %}
 
 {% block title %}{{ edit_mode|yesno:"Editează eveniment,Adaugă eveniment" }}{% endblock %}
 
 {% block content %}
-<div class="container my-4">
-  <h2 class="mb-4">{{ edit_mode|yesno:"✏️ Editează eveniment,➕ Adaugă eveniment" }}</h2>
+<div class="container my-4" style="max-width: 700px;">
+  <h2 class="mb-2">{{ edit_mode|yesno:"✏️ Editează eveniment,➕ Adaugă eveniment" }}</h2>
+  {% comment %} {% if edit_mode and event %}
+    <h5 class="text-muted mb-4">Titlu: <strong>{{ event.title }}</strong></h5>
+  {% endif %} {% endcomment %}
 
   {% if form.errors %}
     <div class="alert alert-danger">
@@ -27,7 +31,7 @@
     {% for field in form %}
       <div class="mb-3">
         {{ field.label_tag }}
-        {{ field }}
+        {{ field|add_class:"form-control" }}
 
         {% if field.help_text %}
           <small class="form-text text-muted">{{ field.help_text }}</small>
@@ -41,10 +45,26 @@
       </div>
     {% endfor %}
 
-    <button type="submit" class="btn btn-primary">
-      {{ edit_mode|yesno:"💾 Salvează modificările,✅ Adaugă eveniment" }}
-    </button>
-    <a href="{% url 'events:event_list' %}" class="btn btn-secondary ms-2">Renunță</a>
+    <!-- Butoane pe o singură linie -->
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn btn-primary">
+        {{ edit_mode|yesno:"💾 Salvează modificările,✅ Adaugă eveniment" }}
+      </button>
+
+      <a href="{% url 'events:event_list' %}" class="btn btn-secondary">
+        Renunță
+      </a>
+
+      {% if edit_mode %}
+        <form method="post" action="{% url 'events:delete_event' event.id %}" class="d-inline-block m-0 p-0">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger"
+            onclick="return confirm('Ești sigur că vrei să ștergi acest eveniment?');">
+            🗑️ Șterge evenimentul
+          </button>
+        </form>
+      {% endif %}
+    </div>
   </form>
 </div>
 {% endblock %}

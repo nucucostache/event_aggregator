@@ -21,6 +21,8 @@ from .serializers import EventSerializer
 
 from django.utils import timezone
 
+from users.decorators import user_required
+from django.views.decorators.http import require_POST
 
 
 
@@ -161,6 +163,7 @@ def edit_event(request, event_id):
     return render(request, 'events/event_form.html', {
         'form': form,
         'edit_mode': True,
+        'event': event,
     })
 
 @login_required
@@ -218,3 +221,33 @@ def my_events(request):
         'title': title,
         'filter_option': filter_option,
     })
+
+
+from users.decorators import user_required
+
+@login_required
+@user_required
+def user_dashboard(request):
+    # Preluăm evenimentele la care userul este înscris
+    registrations = Registration.objects.filter(user=request.user).select_related('event')
+    events = [reg.event for reg in registrations]
+
+    return render(request, 'events/user_dashboard.html', {
+        'events': events,
+        'title': 'Evenimentele mele înscrise',
+    })
+    
+@login_required
+@organizer_required
+@require_POST
+def delete_event(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+
+    # Verifică dacă utilizatorul este organizatorul evenimentului
+    if event.organizer != request.user:
+        return HttpResponseForbidden("Nu ai permisiunea să ștergi acest eveniment.")
+
+    event.delete()
+    messages.success(request, "Evenimentul a fost șters cu succes.")
+    return redirect('events:dashboard_organizator')
+

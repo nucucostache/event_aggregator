@@ -17,8 +17,8 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = ['title', 'start_date', 'end_date', 'description', 'location', 'image']
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
 
     def clean_title(self):
