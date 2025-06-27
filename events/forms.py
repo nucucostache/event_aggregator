@@ -6,32 +6,12 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 
-
-class EventSearchForm(forms.Form):
-    name = forms.CharField(label='Nume eveniment', required=False)
-    location = forms.CharField(label='Locație', required=False)
-    # category = forms.ModelChoiceField(
-    #     queryset=Category.objects.all(),
-    #     label='Categorie',
-    #     required=False
-    # )
-    date = forms.DateField(
-        label='Dată',
-        required=False,
-        widget=forms.DateInput(attrs={'type': 'date'})
-    )
-    keyword = forms.CharField(label='Cuvânt cheie în descriere', required=False)
-
-
-
-
-
 # Ce facem mai jos::
 # Folosim ModelForm pentru modelul Event
 # Validăm titlul să nu fie gol
 # Validăm descrierea să aibă minim 20 caractere
 # În metoda clean validăm relația între datele de start și end, plus să fie dată viitoare start_date
-
+# ---------------------------------------------------------------------------------------------------------------------------------------------
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
@@ -64,25 +44,57 @@ class EventForm(forms.ModelForm):
             if start_date < timezone.localdate():
                 raise ValidationError("Data de început trebuie să fie azi sau în viitor.")
             
-   
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------   
+
 class EventSearchForm(forms.Form):
-    name = forms.CharField(label='Titlu', required=False)
-    location = forms.CharField(label='Locație', required=False)
-    start_date = forms.DateField(label='Data de început', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-    description = forms.CharField(label='Descriere', required=False)
-    
+    name = forms.CharField(
+        label='Titlu',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    location = forms.CharField(
+        label='Locație',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    start_date = forms.DateField(
+        label='Data de început',
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+    )
+
+    description = forms.CharField(
+        label='Descriere',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
     STATUS_CHOICES = [
         ('all', 'Toate'),
         ('upcoming', 'Viitoare'),
         ('ongoing', 'În curs'),
     ]
-    status = forms.ChoiceField(label='Stare', choices=STATUS_CHOICES, required=False)
+    status = forms.ChoiceField(
+        label='Stare',
+        choices=STATUS_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
     
-    
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------       
 class CommentForm(forms.ModelForm):
     content = forms.CharField(
         label='Comentariu',
-        widget=forms.Textarea(attrs={'rows': 3, 'maxlength': 500}),
+        widget=forms.Textarea(attrs={
+            'rows': 3,
+            'maxlength': 500,
+            'class': 'form-control',  # 👈 Bootstrap class aici
+        }),
         max_length=500,
         help_text='Maxim 500 caractere.'
     )

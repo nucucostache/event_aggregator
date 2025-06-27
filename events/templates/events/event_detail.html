@@ -1,77 +1,98 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container my-4">
+
   {% if event.image %}
-  <img src="{{ event.image.url }}" alt="Imagine eveniment" style="max-width: 400px;">
+    <div class="text-center mb-4">
+      <img src="{{ event.image.url }}" alt="Imagine eveniment" class="img-fluid rounded" style="max-height: 400px;">
+    </div>
   {% endif %}
 
-  <h2>{{ event.title }}</h2>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>{{ event.title }}</h2>
+
+    {% if user.is_authenticated and user == event.organizer %}
+      <a href="{% url 'events:edit_event' event.id %}" class="btn btn-outline-secondary btn-sm">
+        ✏️ Editează evenimentul
+      </a>
+    {% endif %}
+  </div>
+
   <p><strong>Descriere:</strong> {{ event.description }}</p>
   <p><strong>Locație:</strong> {{ event.location }}</p>
   <p><strong>Perioadă:</strong> {{ event.start_date }} – {{ event.end_date }}</p>
 
   {% if user.is_authenticated %}
-    {% if user == event.organizer %}
-      <p><a href="{% url 'events:edit_event' event.id %}">✏️ Editează evenimentul</a></p>
-    {% endif %}
-    
     {% if is_registered %}
-      <p style="color: green;">✔ Ești deja înscris la acest eveniment.</p>
+      <div class="alert alert-success d-inline-block">
+        ✔ Ești deja înscris la acest eveniment.
+      </div>
 
-      <form method="post" action="{% url 'events:unregister_from_event' event.id %}">
+      <form method="post" action="{% url 'events:unregister_from_event' event.id %}" class="mt-3">
         {% csrf_token %}
-        <button type="submit" style="margin-top: 10px; background-color: #f44336; color: white;">
-          Dezabonează-te
-        </button>
+        <button type="submit" class="btn btn-danger">Dezabonează-te</button>
       </form>
     {% else %}
-      <form method="post" action="{% url 'events:register_for_event' event.id %}">
+      <form method="post" action="{% url 'events:register_for_event' event.id %}" class="mt-3">
         {% csrf_token %}
-        <button type="submit">Înscrie-te la eveniment</button>
+        <button type="submit" class="btn btn-primary">Înscrie-te la eveniment</button>
       </form>
     {% endif %}
   {% endif %}
 
-  <p><a href="{% url 'events:event_list' %}">← Înapoi la listă</a></p>
-
-  <h3>Participanți înscriși:</h3>
-    {% if registered_users %}
-      <ul>
-          {% for reg in registered_users %}
-              <li>{{ reg.user.get_full_name|default:reg.user.username }}</li>
-          {% endfor %}
-      </ul>
-    {% else %}
-      <p>Nu există participanți înscriși încă.</p>
-    {% endif %}
-
+  <p class="mt-4"><a href="{% url 'events:event_list' %}">← Înapoi la listă</a></p>
 
   <hr>
+
+  <h3>Participanți înscriși:</h3>
+  {% if registered_users %}
+    <ul class="list-group mb-4">
+      {% for reg in registered_users %}
+        <li class="list-group-item">
+          {{ reg.user.get_full_name|default:reg.user.username }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">Nu există participanți înscriși încă.</p>
+  {% endif %}
+
+  <hr>
+
   <h3>Comentarii:</h3>
 
   {% if user.is_authenticated %}
-    <form method="post">
+    <form method="post" novalidate>
       {% csrf_token %}
-      {{ comment_form.as_p }}
-      <button type="submit">Adaugă comentariu</button>
+      <div class="mb-3">
+        {{ comment_form.content.label_tag }}
+        {{ comment_form.content }}
+        {% if comment_form.content.errors %}
+          <div class="text-danger mt-1">{{ comment_form.content.errors }}</div>
+        {% endif %}
+      </div>
+      <button type="submit" class="btn btn-success">Adaugă comentariu</button>
     </form>
   {% else %}
     <p><a href="{% url 'login' %}">Autentifică-te</a> pentru a adăuga comentarii.</p>
   {% endif %}
 
   <hr>
+
   {% if comments %}
-    <ul>
+    <ul class="list-group">
       {% for comment in comments %}
-        <li>
-          <strong>{{ comment.user.username }}</strong> ({{ comment.created_at|date:"d.m.Y H:i" }}):<br>
-          {{ comment.content }}
+        <li class="list-group-item">
+          <strong>{{ comment.user.username }}</strong> 
+          <small class="text-muted">({{ comment.created_at|date:"d.m.Y H:i" }})</small>
+          <p class="mb-0">{{ comment.content }}</p>
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p>Nu există comentarii pentru acest eveniment.</p>
+    <p class="text-muted">Nu există comentarii pentru acest eveniment.</p>
   {% endif %}
 
-
+</div>
 {% endblock %}

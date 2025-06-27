@@ -1,27 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Evenimente din API</h2>
+  <h2 class="mb-4">Evenimente din API</h2>
 
-  <form method="get">
-    <label>Start: <input type="date" name="start" value="{{ start }}"></label>
-    <label>End: <input type="date" name="end" value="{{ end }}"></label>
-    <button type="submit">Filtrează</button>
+  <form method="get" class="row g-3 align-items-end mb-4">
+    <div class="col-auto">
+      <label for="start" class="form-label">Start:</label>
+      <input type="date" id="start" name="start" value="{{ start }}" class="form-control">
+    </div>
+    <div class="col-auto">
+      <label for="end" class="form-label">End:</label>
+      <input type="date" id="end" name="end" value="{{ end }}" class="form-control">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Filtrează</button>
+    </div>
   </form>
 
   <hr>
 
   {% if events %}
-    <ul>
+    <ul class="list-group">
       {% for event in events %}
-        <li>
-          <strong>{{ event.title }}</strong><br>
-          {{ event.location }} – {{ event.start_date }} → {{ event.end_date }}<br>
-          {{ event.description }}
+        <li class="list-group-item mb-3">
+          <h5>{{ event.title }}</h5>
+          <p class="mb-1"><strong>Locație:</strong> {{ event.location }}</p>
+          <p class="mb-1"><strong>Perioadă:</strong> {{ event.start_date }} → {{ event.end_date }}</p>
+          <p>{{ event.description }}</p>
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p>Nu există evenimente în perioada selectată.</p>
+    <p class="text-muted">Nu există evenimente în perioada selectată.</p>
   {% endif %}
 {% endblock %}

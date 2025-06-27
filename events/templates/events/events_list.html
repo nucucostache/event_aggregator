@@ -1,48 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Lista evenimentelor</h1>
+<div class="container mt-4">
+  <h2 class="mb-4">Lista evenimentelor</h2>
 
-  <form method="get">
-    <p>
-      {{ form.name.label_tag }}<br>
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+      <label class="form-label">{{ form.name.label }}</label>
       {{ form.name }}
-    </p>
-    <p>
-      {{ form.location.label_tag }}<br>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">{{ form.location.label }}</label>
       {{ form.location }}
-    </p>
-    <p>
-      {{ form.start_date.label_tag }}<br>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">{{ form.start_date.label }}</label>
       {{ form.start_date }}
-    </p>
-    <p>
-      {{ form.description.label_tag }}<br>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">{{ form.description.label }}</label>
       {{ form.description }}
-    </p>
-    <p>
-      {{ form.status.label_tag }}<br>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">{{ form.status.label }}</label>
       {{ form.status }}
-    </p>
-    <button type="submit">Caută</button>
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Caută</button>
+    </div>
   </form>
 
   <hr>
 
   {% if events %}
-    <ul>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
       {% for event in events %}
-        <li style="margin-bottom: 1.5em;">
-          <a href="{% url 'events:event_detail' event.id %}">
-            <strong>{{ event.title }}</strong>
-          </a><br>
-          <em>Locație:</em> {{ event.location }}<br>
-          <em>Perioadă:</em> {{ event.start_date }} – {{ event.end_date }}<br>
-          <em>Descriere:</em> {{ event.description|truncatewords:20 }}
-        </li>
+        <div class="col">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title">
+                <a href="{% url 'events:event_detail' event.id %}">{{ event.title }}</a>
+              </h5>
+              <p class="card-text">
+                <strong>Locație:</strong> {{ event.location }}<br>
+                <strong>Perioadă:</strong> {{ event.start_date }} – {{ event.end_date }}<br>
+                <strong>Descriere:</strong> {{ event.description|truncatewords:20 }}
+              </p>
+            </div>
+          </div>
+        </div>
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
-    <p>Nu există evenimente care corespund criteriilor.</p>
+    <div class="alert alert-info mt-4">
+      Nu există evenimente care corespund criteriilor.
+    </div>
   {% endif %}
+</div>
 {% endblock %}

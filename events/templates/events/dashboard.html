@@ -1,18 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Bun venit în panoul organizatorului, {{ user.userprofile.display_name }}!</h2>
-  <p>Aici vei putea administra evenimentele tale.</p>
+<div class="container my-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title mb-3">👋 Bun venit, {{ user.userprofile.display_name }}!</h2>
+      <p class="card-text">Aici poți administra evenimentele tale.</p>
+    </div>
+  </div>
 
-  <h3>Evenimentele tale:</h3>
-  {% if events %}
-    <ul>
-      {% for event in events %}
-        <li>{{ event.title }} - {{ event.start_date }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Nu ai încă evenimente create.</p>
-  {% endif %}
+  <div class="mt-5">
+    <h4>📅 Evenimentele tale:</h4>
+    
+    {% if events %}
+      <ul class="list-group">
+        {% for event in events %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <strong>{{ event.title }}</strong>
+            <span class="badge bg-secondary">{{ event.start_date|date:"d.m.Y" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="alert alert-warning mt-3">Nu ai încă evenimente create.</div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
-

@@ -1,32 +1,40 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container my-4">
+  <form method="get" class="row g-3 align-items-center mb-4">
+    <div class="col-auto">
+      <label for="filter" class="col-form-label">Filtrează evenimente:</label>
+    </div>
+    <div class="col-auto">
+      <select name="filter" id="filter" class="form-select" onchange="this.form.submit()">
+        <option value="all" {% if filter_option == 'all' %}selected{% endif %}>Toate</option>
+        <option value="future" {% if filter_option == 'future' %}selected{% endif %}>Viitoare</option>
+        <option value="past" {% if filter_option == 'past' %}selected{% endif %}>Trecute</option>
+      </select>
+    </div>
+    <noscript>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Aplică</button>
+      </div>
+    </noscript>
+  </form>
 
-<form method="get" style="margin-bottom: 1em;">
-  <label for="filter">Filtrează evenimente:</label>
-  <select name="filter" id="filter" onchange="this.form.submit()">
-    <option value="all" {% if filter_option == 'all' %}selected{% endif %}>Toate</option>
-    <option value="future" {% if filter_option == 'future' %}selected{% endif %}>Viitoare</option>
-    <option value="past" {% if filter_option == 'past' %}selected{% endif %}>Trecute</option>
-  </select>
-  <noscript><button type="submit">Aplică</button></noscript>
-</form>
-
-  <h2>{{ title }}</h2>
+  <h2 class="mb-4">{{ title }}</h2>
 
   {% if events %}
-    <ul>
+    <div class="list-group mb-3">
       {% for event in events %}
-        <li>
-          <a href="{% url 'events:event_detail' event.id %}">
-            <strong>{{ event.title }}</strong>
-          </a> – {{ event.start_date|date:"d.m.Y" }}
-        </li>
+        <a href="{% url 'events:event_detail' event.id %}" class="list-group-item list-group-item-action">
+          <strong>{{ event.title }}</strong>
+          <span class="text-muted"> – {{ event.start_date|date:"d.m.Y" }}</span>
+        </a>
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
-    <p>Nu există evenimente afișabile.</p>
+    <div class="alert alert-warning">Nu există evenimente afișabile.</div>
   {% endif %}
 
-  <p><a href="{% url 'events:event_list' %}">← Înapoi la listă</a></p>
+  <a href="{% url 'events:event_list' %}" class="btn btn-secondary">← Înapoi la listă</a>
+</div>
 {% endblock %}
