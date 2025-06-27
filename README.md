@@ -24,6 +24,7 @@ O aplicație Django pentru centralizarea și gestionarea evenimentelor, unde org
 - Bootstrap 5
 - HTML + CSS
 - Django REST Framework
+- Bootstrap 5.x
 
 ---
 
