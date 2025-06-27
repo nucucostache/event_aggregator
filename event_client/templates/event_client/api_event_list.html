@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Evenimente din API</h2>
+
+  <form method="get">
+    <label>Start: <input type="date" name="start" value="{{ start }}"></label>
+    <label>End: <input type="date" name="end" value="{{ end }}"></label>
+    <button type="submit">Filtrează</button>
+  </form>
+
+  <hr>
+
+  {% if events %}
+    <ul>
+      {% for event in events %}
+        <li>
+          <strong>{{ event.title }}</strong><br>
+          {{ event.location }} – {{ event.start_date }} → {{ event.end_date }}<br>
+          {{ event.description }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nu există evenimente în perioada selectată.</p>
+  {% endif %}
+{% endblock %}

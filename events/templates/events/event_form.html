@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ edit_mode|yesno:"Editează eveniment,Adaugă eveniment" }}{% endblock %}
+
+{% block content %}
+  <h2>{{ edit_mode|yesno:"Editează eveniment,Adaugă eveniment" }}</h2>
+
+  {% if form.errors %}
+    <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 1em;">
+      <ul>
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{{ edit_mode|yesno:"Salvează modificările,Adaugă eveniment" }}</button>
+  </form>
+{% endblock %}

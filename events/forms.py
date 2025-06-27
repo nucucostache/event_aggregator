@@ -1,0 +1,92 @@
+from django import forms
+from .models import Comment
+from .models import Category
+from .models import Event
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+
+
+
+class EventSearchForm(forms.Form):
+    name = forms.CharField(label='Nume eveniment', required=False)
+    location = forms.CharField(label='Locație', required=False)
+    # category = forms.ModelChoiceField(
+    #     queryset=Category.objects.all(),
+    #     label='Categorie',
+    #     required=False
+    # )
+    date = forms.DateField(
+        label='Dată',
+        required=False,
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    keyword = forms.CharField(label='Cuvânt cheie în descriere', required=False)
+
+
+
+
+
+# Ce facem mai jos::
+# Folosim ModelForm pentru modelul Event
+# Validăm titlul să nu fie gol
+# Validăm descrierea să aibă minim 20 caractere
+# În metoda clean validăm relația între datele de start și end, plus să fie dată viitoare start_date
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['title', 'start_date', 'end_date', 'description', 'location', 'image']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean_title(self):
+        title = self.cleaned_data.get('title', '').strip()
+        if not title:
+            raise ValidationError("Titlul evenimentului nu poate fi gol sau doar spații.")
+        return title
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description', '')
+        if len(description) < 20:
+            raise ValidationError("Descrierea trebuie să aibă cel puțin 20 de caractere.")
+        return description
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+
+        if start_date and end_date:
+            if start_date > end_date:
+                raise ValidationError("Data de început nu poate fi după data de sfârșit.")
+            if start_date < timezone.localdate():
+                raise ValidationError("Data de început trebuie să fie azi sau în viitor.")
+            
+   
+class EventSearchForm(forms.Form):
+    name = forms.CharField(label='Titlu', required=False)
+    location = forms.CharField(label='Locație', required=False)
+    start_date = forms.DateField(label='Data de început', required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    description = forms.CharField(label='Descriere', required=False)
+    
+    STATUS_CHOICES = [
+        ('all', 'Toate'),
+        ('upcoming', 'Viitoare'),
+        ('ongoing', 'În curs'),
+    ]
+    status = forms.ChoiceField(label='Stare', choices=STATUS_CHOICES, required=False)
+    
+    
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(
+        label='Comentariu',
+        widget=forms.Textarea(attrs={'rows': 3, 'maxlength': 500}),
+        max_length=500,
+        help_text='Maxim 500 caractere.'
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['content']

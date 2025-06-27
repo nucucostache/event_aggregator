@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Bun venit în panoul organizatorului, {{ user.userprofile.display_name }}!</h2>
+  <p>Aici vei putea administra evenimentele tale.</p>
+
+  <h3>Evenimentele tale:</h3>
+  {% if events %}
+    <ul>
+      {% for event in events %}
+        <li>{{ event.title }} - {{ event.start_date }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nu ai încă evenimente create.</p>
+  {% endif %}
+{% endblock %}
+

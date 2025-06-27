@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.sqlite3
+db.sqlite3
+
+# Media uploads
+/media/
+
+# Environment variables
+.env
+venv/
+env/
+.venv/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# Static files (dacă le construiești)
+staticfiles/

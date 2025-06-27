@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form method="get" style="margin-bottom: 1em;">
+  <label for="filter">Filtrează evenimente:</label>
+  <select name="filter" id="filter" onchange="this.form.submit()">
+    <option value="all" {% if filter_option == 'all' %}selected{% endif %}>Toate</option>
+    <option value="future" {% if filter_option == 'future' %}selected{% endif %}>Viitoare</option>
+    <option value="past" {% if filter_option == 'past' %}selected{% endif %}>Trecute</option>
+  </select>
+  <noscript><button type="submit">Aplică</button></noscript>
+</form>
+
+  <h2>{{ title }}</h2>
+
+  {% if events %}
+    <ul>
+      {% for event in events %}
+        <li>
+          <a href="{% url 'events:event_detail' event.id %}">
+            <strong>{{ event.title }}</strong>
+          </a> – {{ event.start_date|date:"d.m.Y" }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nu există evenimente afișabile.</p>
+  {% endif %}
+
+  <p><a href="{% url 'events:event_list' %}">← Înapoi la listă</a></p>
+{% endblock %}

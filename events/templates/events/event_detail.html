@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% if event.image %}
+  <img src="{{ event.image.url }}" alt="Imagine eveniment" style="max-width: 400px;">
+  {% endif %}
+
+  <h2>{{ event.title }}</h2>
+  <p><strong>Descriere:</strong> {{ event.description }}</p>
+  <p><strong>Locație:</strong> {{ event.location }}</p>
+  <p><strong>Perioadă:</strong> {{ event.start_date }} – {{ event.end_date }}</p>
+
+  {% if user.is_authenticated %}
+    {% if user == event.organizer %}
+      <p><a href="{% url 'events:edit_event' event.id %}">✏️ Editează evenimentul</a></p>
+    {% endif %}
+    
+    {% if is_registered %}
+      <p style="color: green;">✔ Ești deja înscris la acest eveniment.</p>
+
+      <form method="post" action="{% url 'events:unregister_from_event' event.id %}">
+        {% csrf_token %}
+        <button type="submit" style="margin-top: 10px; background-color: #f44336; color: white;">
+          Dezabonează-te
+        </button>
+      </form>
+    {% else %}
+      <form method="post" action="{% url 'events:register_for_event' event.id %}">
+        {% csrf_token %}
+        <button type="submit">Înscrie-te la eveniment</button>
+      </form>
+    {% endif %}
+  {% endif %}
+
+  <p><a href="{% url 'events:event_list' %}">← Înapoi la listă</a></p>
+
+  <h3>Participanți înscriși:</h3>
+    {% if registered_users %}
+      <ul>
+          {% for reg in registered_users %}
+              <li>{{ reg.user.get_full_name|default:reg.user.username }}</li>
+          {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nu există participanți înscriși încă.</p>
+    {% endif %}
+
+
+  <hr>
+  <h3>Comentarii:</h3>
+
+  {% if user.is_authenticated %}
+    <form method="post">
+      {% csrf_token %}
+      {{ comment_form.as_p }}
+      <button type="submit">Adaugă comentariu</button>
+    </form>
+  {% else %}
+    <p><a href="{% url 'login' %}">Autentifică-te</a> pentru a adăuga comentarii.</p>
+  {% endif %}
+
+  <hr>
+  {% if comments %}
+    <ul>
+      {% for comment in comments %}
+        <li>
+          <strong>{{ comment.user.username }}</strong> ({{ comment.created_at|date:"d.m.Y H:i" }}):<br>
+          {{ comment.content }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nu există comentarii pentru acest eveniment.</p>
+  {% endif %}
+
+
+{% endblock %}
