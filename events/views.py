@@ -26,15 +26,7 @@ from django.views.decorators.http import require_POST
 
 
 
-@login_required
-@organizer_required
-def organizer_dashboard(request):
-    # Acum doar organizatorii autentificați pot accesa
-    # Aici poți prelua evenimentele organizatorului, ex:
-    # events = Event.objects.filter(organizer=request.user)
-    events = Event.objects.filter(organizer=request.user)  # presupunem că ai câmp organizer în modelul Event
-    return render(request, 'events/dashboard.html', {'events': events})
-
+#--------------------------------------------------------------------------------------------------------------------------------------
 # @login_required
 def event_list(request):
     # Orice utilizator autentificat poate vedea lista evenimentelor
@@ -71,7 +63,7 @@ def event_list(request):
     
     
     # Am pus @login_required și apoi @organizer_required pe dashboard — astfel doar utilizatorii autentificați și cu rol organizer pot accesa.
-
+#--------------------------------------------------------------------------------------------------------------------------------------
 @login_required
 def event_detail(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -108,7 +100,7 @@ def event_detail(request, event_id):
 
 
 
-   
+#--------------------------------------------------------------------------------------------------------------------------------------   
 @login_required
 def register_for_event(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -122,7 +114,7 @@ def register_for_event(request, event_id):
 
     return redirect('events:event_detail', event_id=event.id)  # presupunem că ai view de detaliu eveniment 
     
-
+#--------------------------------------------------------------------------------------------------------------------------------------
 @login_required
 @organizer_required  # să fie accesibil doar organizatorilor
 def add_event(request):
@@ -141,7 +133,7 @@ def add_event(request):
         'edit_mode': False,
     })
 
-
+#--------------------------------------------------------------------------------------------------------------------------------------
 @login_required
 @organizer_required
 def edit_event(request, event_id):
@@ -166,6 +158,7 @@ def edit_event(request, event_id):
         'event': event,
     })
 
+#--------------------------------------------------------------------------------------------------------------------------------------
 @login_required
 def unregister_from_event(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
@@ -177,7 +170,7 @@ def unregister_from_event(request, event_id):
         messages.info(request, "Nu erai înscris la acest eveniment.")
     return redirect('events:event_detail', event_id=event.id)
 
-
+#--------------------------------------------------------------------------------------------------------------------------------------
 @api_view(['GET'])
 def upcoming_events_api(request):
     today = now().date()
@@ -194,6 +187,7 @@ def upcoming_events_api(request):
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
 
+#--------------------------------------------------------------------------------------------------------------------------------------
 @login_required
 def my_events(request):
     today = timezone.now().date()
@@ -223,8 +217,9 @@ def my_events(request):
     })
 
 
-from users.decorators import user_required
 
+
+#--------------------------------------------------------------------------------------------------------------------------------------
 @login_required
 @user_required
 def user_dashboard(request):
@@ -236,7 +231,8 @@ def user_dashboard(request):
         'events': events,
         'title': 'Evenimentele mele înscrise',
     })
-    
+
+#--------------------------------------------------------------------------------------------------------------------------------------    
 @login_required
 @organizer_required
 @require_POST
@@ -251,3 +247,13 @@ def delete_event(request, event_id):
     messages.success(request, "Evenimentul a fost șters cu succes.")
     return redirect('events:dashboard_organizator')
 
+
+#--------------------------------------------------------------------------------------------------------------------------------------
+@login_required
+@organizer_required
+def organizer_dashboard(request):
+    # Acum doar organizatorii autentificați pot accesa
+    # Aici poți prelua evenimentele organizatorului, ex:
+    # events = Event.objects.filter(organizer=request.user)
+    events = Event.objects.filter(organizer=request.user)  # presupunem că ai câmp organizer în modelul Event
+    return render(request, 'events/dashboard.html', {'events': events})

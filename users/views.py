@@ -11,22 +11,32 @@ from .models import UserProfile
 from django.contrib.auth import logout
 
 
+#--------------------------------------------------------------------------------------------------------------------------------------
+from django.contrib import messages
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+
             # Salvăm rolul selectat în profilul utilizatorului
             role = form.cleaned_data.get('role')
             user.userprofile.role = role
             user.userprofile.save()
+
+            messages.success(request, "Cont creat cu succes! Te poți autentifica.")
             return redirect('login')
+        else:
+            messages.error(request, "Formular invalid. Verifică datele introduse.")
     else:
         form = CustomUserCreationForm()
+
     return render(request, 'registration/register.html', {'form': form})
 
 
 
+#--------------------------------------------------------------------------------------------------------------------------------------
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -36,7 +46,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                
+
                 try:
                     role = user.userprofile.role
                     if role == 'organizer':
@@ -49,16 +59,19 @@ def login_view(request):
                     messages.error(request, "Contul nu are un profil asociat.")
                     return redirect('users:login')
             else:
-                messages.error(request, 'Autentificare eșuată.')
+                messages.error(request, 'Autentificare eșuată. Verifică username și parolă.')
+        else:
+            messages.error(request, 'Formularul nu este valid.')
     else:
         form = LoginForm()
-    
+
     return render(request, 'users/login.html', {'form': form})
 
 
 
+#--------------------------------------------------------------------------------------------------------------------------------------
 def logout_view(request):
     logout(request)
-    messages.info(request, "Ai fost delogat cu succes.")
+    messages.success(request, "Ai fost delogat cu succes.")  # sau .info() dacă vrei albastru
     return redirect('login')
 

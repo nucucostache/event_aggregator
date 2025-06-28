@@ -7,14 +7,16 @@
   {% if events %}
     <ul class="list-group">
       {% for event in events %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
           <strong>{{ event.title }}</strong>
-          <span class="badge bg-secondary">{{ event.start_date|date:"d.m.Y" }}</span>
+          <span class="badge bg-secondary fs-6 mt-2 mt-sm-0">{{ event.start_date|date:"d.m.Y" }}</span>
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <div class="alert alert-info">Nu ești înscris la niciun eveniment.</div>
+    <div class="alert alert-info" role="alert">
+      Nu ești înscris la niciun eveniment.
+    </div>
   {% endif %}
 </div>
 {% endblock %}

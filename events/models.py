@@ -12,6 +12,7 @@ class Event(models.Model):
     location = models.CharField(max_length=100)
     organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='events')
     image = models.ImageField(upload_to='event_images/', blank=True, null=True)
+    website_url = models.URLField(blank=True, null=True, help_text="Link către site-uri adiacente evenimentului")
 
     def __str__(self):
         return f"{self.title} ({self.start_date} - {self.end_date})"

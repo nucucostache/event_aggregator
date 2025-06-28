@@ -15,7 +15,7 @@ from django.utils import timezone
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'start_date', 'end_date', 'description', 'location', 'image']
+        fields = ['title', 'location', 'start_date', 'end_date', 'description', 'image', 'website_url']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),

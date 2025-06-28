@@ -2,9 +2,11 @@
 
 {% block content %}
 <div class="container my-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>👋 Bun venit, {{ user.userprofile.display_name }}!</h2>
-    <a href="{% url 'events:add_event' %}" class="btn btn-primary">➕ Adaugă eveniment</a>
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <h2 class="mb-2 mb-md-0">👋 Bun venit, {{ user.userprofile.display_name }}!</h2>
+    <a href="{% url 'events:add_event' %}" class="btn btn-primary">
+      ➕ Adaugă eveniment
+    </a>
   </div>
 
   <p>Aici poți administra evenimentele tale.</p>
@@ -12,20 +14,19 @@
   <div class="mt-5">
     <h4>📅 Evenimentele tale:</h4>
     {% if events %}
-
-    <ul class="list-group">
+      <ul class="list-group">
         {% for event in events %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
+          <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
             <strong>{{ event.title }}</strong>
-            <span>
-              <a href="{% url 'events:edit_event' event.id %}" class="btn btn-sm btn-outline-primary me-2">Editează</a>
-              <span class="badge bg-secondary">{{ event.start_date|date:"d.m.Y" }}</span>
-            </span>
+            <div class="mt-2 mt-sm-0">
+              <a href="{% url 'events:edit_event' event.id %}" class="btn btn-sm btn-outline-primary me-2 mb-2 mb-sm-0">
+                Editează
+              </a>
+              <span class="badge bg-secondary fs-6">{{ event.start_date|date:"d.m.Y" }}</span>
+            </div>
           </li>
         {% endfor %}
       </ul>
-
-
     {% else %}
       <div class="alert alert-warning mt-3">Nu ai încă evenimente create.</div>
     {% endif %}
