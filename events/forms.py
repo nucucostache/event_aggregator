@@ -1,6 +1,6 @@
 from django import forms
 from .models import Comment
-from .models import Category
+# from .models import Category
 from .models import Event
 from django.core.exceptions import ValidationError
 from django.utils import timezone

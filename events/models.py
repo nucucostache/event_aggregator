@@ -27,22 +27,13 @@ class Registration(models.Model):
 
     def __str__(self):
         return f"{self.user.username} înscris la {self.event.title}"
+     
     
-class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    content = models.TextField(max_length=500)
-    created_at = models.DateTimeField(auto_now_add=True)
+# class Category(models.Model):
+#     name = models.CharField(max_length=100)
 
-    def __str__(self):
-        return f"{self.user.username} comentariu la {self.event.title}"
-    
-    
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
     
 class Comment(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='comments')
