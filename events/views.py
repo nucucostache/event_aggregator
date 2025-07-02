@@ -27,9 +27,7 @@ from django.views.decorators.http import require_POST
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------
-# @login_required
 def event_list(request):
-    # Orice utilizator autentificat poate vedea lista evenimentelor
     form = EventSearchForm(request.GET)
     events = Event.objects.all()
 
@@ -39,6 +37,7 @@ def event_list(request):
         date = form.cleaned_data.get('date')
         keyword = form.cleaned_data.get('keyword')
         status = form.cleaned_data.get('status')
+        category = form.cleaned_data.get('category')
 
         if name:
             events = events.filter(title__icontains=name)
@@ -49,20 +48,20 @@ def event_list(request):
         if keyword:
             events = events.filter(description__icontains=keyword)
 
-        # Filtrare după status (viitoare / în curs / toate)
         today = now().date()
         if status == 'upcoming':
             events = events.filter(start_date__gt=today)
         elif status == 'ongoing':
             events = events.filter(start_date__lte=today, end_date__gte=today)
 
+        if category:
+            events = events.filter(category=category)
+
     return render(request, 'events/events_list.html', {
         'form': form,
         'events': events
     })
-    
-    
-    # Am pus @login_required și apoi @organizer_required pe dashboard — astfel doar utilizatorii autentificați și cu rol organizer pot accesa.
+
 #--------------------------------------------------------------------------------------------------------------------------------------
 @login_required
 def event_detail(request, event_id):
@@ -91,13 +90,6 @@ def event_detail(request, event_id):
         'comment_form': comment_form,
     }
     return render(request, 'events/event_detail.html', context)
-
-# Mai sus am facut urmatoarele:
-# Am preluat comentariile ordonate descrescător după data creării
-# Am procesat formularul pentru comentarii
-# După adăugarea unui comentariu valid, facem redirect (ca să evităm dublarea la refresh)
-# Am adăugat în context comments și comment_form
-
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------   
@@ -215,8 +207,6 @@ def my_events(request):
         'title': title,
         'filter_option': filter_option,
     })
-
-
 
 
 #--------------------------------------------------------------------------------------------------------------------------------------

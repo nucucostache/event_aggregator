@@ -1,24 +1,19 @@
 from django import forms
 from .models import Comment
-# from .models import Category
 from .models import Event
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 
-# Ce facem mai jos::
-# Folosim ModelForm pentru modelul Event
-# Validăm titlul să nu fie gol
-# Validăm descrierea să aibă minim 20 caractere
-# În metoda clean validăm relația între datele de start și end, plus să fie dată viitoare start_date
 # ---------------------------------------------------------------------------------------------------------------------------------------------
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'location', 'start_date', 'end_date', 'description', 'image', 'website_url']
+        fields = ['title', 'location', 'start_date', 'end_date', 'description', 'image', 'website_url', 'category']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
         }
 
     def clean_title(self):
@@ -83,6 +78,18 @@ class EventSearchForm(forms.Form):
         required=False,
         widget=forms.Select(attrs={'class': 'form-select'})
     )
+        
+    CATEGORY_CHOICES = [
+        ('', 'Toate categoriile'),
+        ('curs', 'Curs'),
+        ('workshop', 'Workshop'),
+]
+    category = forms.ChoiceField(
+        label='Categorie',
+        choices=CATEGORY_CHOICES,
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'})
+)
     
 
 
