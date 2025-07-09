@@ -22,48 +22,48 @@
     </div>
   {% endif %}
 
-  <div class="d-flex flex-column gap-3">
-    <form method="post" enctype="multipart/form-data" novalidate class="d-flex flex-column gap-3">
-      {% csrf_token %}
+  <!-- Formular pentru adăugare / editare -->
+  <form method="post" enctype="multipart/form-data" novalidate class="d-flex flex-column gap-3">
+    {% csrf_token %}
 
-      {% for field in form %}
-        <div class="mb-3">
-          {{ field.label_tag }}
-          {{ field|add_class:"form-control" }}
+    {% for field in form %}
+      <div class="mb-3">
+        {{ field.label_tag }}
+        {{ field|add_class:"form-control" }}
 
-          {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-          {% endif %}
+        {% if field.help_text %}
+          <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
 
-          {% if field.errors %}
-            <div class="text-danger mt-1">
-              {{ field.errors }}
-            </div>
-          {% endif %}
-        </div>
-      {% endfor %}
-
-      <div class="d-flex gap-2 mt-4 align-items-center">
-        <a href="{% url 'events:event_list' %}" class="btn btn-secondary">
-          Renunță
-        </a>
-        
-        <button type="submit" class="btn btn-primary">
-          {{ edit_mode|yesno:"💾 Salvează modificările,✅ Adaugă eveniment" }}
-        </button>
-        
-        {% if edit_mode %}
-          <!-- Buton stergere in acelasi container, cu un formular separat -->
-          <form method="post" action="{% url 'events:delete_event' event.id %}" onsubmit="return confirm('Ești sigur că vrei să ștergi acest eveniment?');" style="margin:0;">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">
-              🗑️ Șterge
-            </button>
-          </form>
+        {% if field.errors %}
+          <div class="text-danger mt-1">
+            {{ field.errors }}
+          </div>
         {% endif %}
       </div>
-    </form>
-  </div>
+    {% endfor %}
 
+    <div class="d-flex gap-2 mt-4 align-items-center">
+      <a href="{% url 'events:event_list' %}" class="btn btn-secondary">
+        Renunță
+      </a>
+
+      <button type="submit" class="btn btn-primary">
+        {{ edit_mode|yesno:"💾 Salvează modificările,✅ Adaugă eveniment" }}
+      </button>
+    </div>
+  </form>
+
+  {% if edit_mode %}
+    <!-- Formular separat pentru ștergere -->
+    <form method="post" action="{% url 'events:delete_event' event.id %}" 
+          onsubmit="return confirm('Ești sigur că vrei să ștergi acest eveniment?');" 
+          class="mt-3">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">
+        🗑️ Șterge
+      </button>
+    </form>
+  {% endif %}
 </div>
 {% endblock %}

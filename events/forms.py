@@ -11,11 +11,19 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = ['title', 'location', 'start_date', 'end_date', 'description', 'image', 'website_url', 'category']
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}, format='%Y-%m-%d'),
             'category': forms.Select(attrs={'class': 'form-select'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Formatează datele pentru câmpurile de tip date
+        for field_name in ['start_date', 'end_date']:
+            date_value = getattr(self.instance, field_name, None)
+            if date_value:
+                self.initial[field_name] = date_value.strftime('%Y-%m-%d')
+    
     def clean_title(self):
         title = self.cleaned_data.get('title', '').strip()
         if not title:
